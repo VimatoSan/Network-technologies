@@ -2,7 +2,11 @@
 #include "constants.h"
 #include <fstream>
 #include <iostream>
+#include "utils.h"
 #include <boost/asio.hpp>
+
+using tcp_connection::Client;
+using namespace tcp_connection::utils;
 
 std::string Client::wait_answer() {
 	boost::system::error_code ec;
@@ -13,7 +17,6 @@ std::string Client::wait_answer() {
 	else {
 		return ec.message();
 	}
-	// std::cout << "Server reply: " << std::string(buffer, buff_size) << std::endl;
 }
 
 
@@ -23,7 +26,7 @@ Client::Client(boost::asio::io_context &io_context, const std::string &filename,
 
 	if (!this->fstream_.is_open()) 
 		throw std::exception("Error while opening file");
-	this->fsize = this->get_fsize();
+	this->fsize = get_fsize(fstream_);
 	boost::asio::ip::tcp::resolver resolver(io_context);
 	boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(address, port);
 	boost::asio::connect(socket_, endpoints);
@@ -51,13 +54,13 @@ void Client::send_file() {
 	}
 	std::cout << "Sending meta end" << std::endl;
 	size_t total_bytes = 0;
-	while (fstream_.read(buffer, BUFFER_SIZE) || fstream_.gcount() > 0) {
+	while (fstream_.read(buffer, consts::BUFFER_SIZE) || fstream_.gcount() > 0) {
 		size_t bytes_to_send = fstream_.gcount();  
 		total_bytes += bytes_to_send;
 		boost::asio::write(socket_, boost::asio::buffer(buffer, bytes_to_send), error);
 
 		if (error) {
-			throw std::runtime_error("Error during sending file: " + error.message());
+			throw std::exception(std::string("Error during sending file: " + error.message()).c_str());
 		}
 	}
 	// std::cout << total_bytes << " " << fsize << std::endl;
@@ -69,13 +72,4 @@ void Client::send_file() {
 		socket_.close();
 		std::cout << "Not all file was sent";
 	}
-}
-
-
-size_t Client::get_fsize() {
-	fstream_.seekg(0, std::ios::end);
-	size_t size = fstream_.tellg();
-	fstream_.seekg(0, std::ios::beg);
-
-	return size;
 }

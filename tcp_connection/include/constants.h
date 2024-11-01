@@ -1,4 +1,7 @@
 #pragma once
 
-constexpr size_t BUFFER_SIZE = 4096;
-constexpr char META_ENDING_SYMBOL = '-';
+namespace tcp_connection::consts {
+	constexpr size_t BUFFER_SIZE = 8 * 1024;
+	constexpr char META_ENDING_SYMBOL = '-';
+	const std::string DIR_OUT_PATH = "uploads/";
+}

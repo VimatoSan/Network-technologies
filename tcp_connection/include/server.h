@@ -6,17 +6,18 @@
 
 using boost::asio::ip::tcp;
 
+namespace tcp_connection {
+	class Server {
+	public:
+		Server(boost::asio::io_context& io_context, const short port);
 
-class Server {
-public:
-	Server(boost::asio::io_context& io_context, const short port);
+	private:
+		std::atomic<int> connection_id;  // Потокобезопасный счетчик
 
-private:
-	std::atomic<int> connection_id;  // Потокобезопасный счетчик
+		void start_accept();
+		boost::asio::io_context io_context;
+		tcp::acceptor acceptor_;
+		std::ofstream fstream_;
 
-	void start_accept();
-	boost::asio::io_context io_context;
-	tcp::acceptor acceptor_;
-	std::ofstream fstream_;
-	
-};
+	};
+}

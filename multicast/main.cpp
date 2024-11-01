@@ -3,12 +3,7 @@
 #include <iostream>
 #include "app.h"
 #include <boost/asio.hpp>
-
-
-// 239.255.0.1
-// ff02::1
-
-const short port = 30001;
+#include "constants.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -18,7 +13,7 @@ int main(int argc, char* argv[]) {
 
     try {
         std::string addr(argv[1]);
-        App app(addr, port);
+        multicast::App app(addr, multicast::consts::port);
         app.start();
     }
     catch (std::exception& e) {

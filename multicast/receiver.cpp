@@ -6,10 +6,11 @@
 #include <boost/asio.hpp>
 #include "receiver.h"
 #include <thread>
+#include "constants.h"
 
 
-const short timer_sec_delay = 1;
-const short live_time = 5;
+using multicast::Receiver;
+using namespace multicast::consts;
 
 
 void Receiver::show_hosts() {
@@ -26,10 +27,10 @@ void Receiver::show_hosts() {
 
 void Receiver::delete_disconn() {
     while (true) {
-       Sleep(timer_sec_delay * 1000);
+       Sleep(DELAY * 1000);
        mutex.lock();
        for (auto& pair : this->copies) {
-           pair.second -= timer_sec_delay;
+           pair.second -= DELAY;
            if (pair.second <= 0) {
                printf("Delete host: %s:%d\n", pair.first.address.c_str(), pair.first.port);
                this->copies.erase(pair.first);
@@ -64,12 +65,12 @@ void Receiver::do_receive() {
                     mutex.lock();
                     Host h = Host(sender_endpoint_.address().to_string(), sender_endpoint_.port());
                     if (this->copies.count(h) == 0) {
-                        this->copies.insert(std::make_pair(h, live_time));
+                        this->copies.insert(std::make_pair(h, LIVE_TIME));
                         printf("Add host: %s:%d\n", h.address.c_str(), h.port);
                         show_hosts();
                     }
                     else
-                        this->copies[h] = live_time;
+                        this->copies[h] = LIVE_TIME;
                     mutex.unlock();
                 }
                 do_receive();

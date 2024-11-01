@@ -2,8 +2,7 @@
 #include <boost/asio.hpp>
 #include "sender.h"
 
-using namespace boost::asio;
-
+using multicast::Sender;
 
 Sender::Sender(boost::asio::io_context& io_context,
         const boost::asio::ip::address& multicast_address, const short multicast_port)

@@ -1,5 +1,8 @@
 #include "host.h"
 
+using multicast::structs::Host;
+
+
 bool Host::operator==(const Host& other) const {
 	return address == other.address && port == other.port;
 }

@@ -4,10 +4,10 @@
 #include "receiver.h"
 #include "sender.h"
 #include <iostream>
+#include "constants.h"
 
-const std::string ipv4_default_addr = "0.0.0.0";
-const std::string ipv6_default_addr = "::";
-
+using multicast::App;
+using namespace multicast::consts;
 
 App::App(std::string address, const short port) : multicast_port(port), address(address) {
 	if (App::is_ipv4()) {
